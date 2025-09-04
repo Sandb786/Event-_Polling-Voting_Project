@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const connectDB = async () => 
 {
   try 
   {
-   // await mongoose.connect(process.env.MONGO_URI);
-    //console.log("✅ MongoDB connected");
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ MongoDB connected");
   } 
   catch (err) 
   {
@@ -15,6 +15,6 @@ const connectDB = async () =>
   
 };
 
-module.exports = connectDB;
+export default connectDB;
 //exports (or module.exports) is how you expose functions, objects, or variables to other files.
 

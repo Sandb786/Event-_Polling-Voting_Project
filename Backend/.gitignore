@@ -1,0 +1,10 @@
+# Ignore environment variable files
+node_modules
+
+
+# # Ignore node modules
+.env.development
+
+
+# Backend
+Struct.txt

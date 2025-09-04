@@ -1,11 +1,12 @@
-import { Router } from "express";
-import register from "../controllers/authController";
-const router = Router();
-
-// router.post("/auth/register",(req,res)=>{res.json({MS:"Done"})});
-router.post("/auth/register",register);
+import express from "express";
+import { login, signup } from "../controllers/AuthController.js";
 
 
+const router = express.Router();
+router.get("/", (req, res) => {
+  res.send("Auth route is working");
+});
+router.post("/signup", signup);
+router.post("/login", login);
 
 export default router;
-

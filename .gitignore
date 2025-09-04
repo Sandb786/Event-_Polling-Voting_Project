@@ -1,7 +1,0 @@
-# Ignore environment variable files
-Backend/.env.development
-
-# Ignore node modules
-Backend/node_modules
-
-Backend/Struct.txt
