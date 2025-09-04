@@ -20,8 +20,17 @@ export const signup = async (req, res) =>
       } 
       catch (error) 
       {
-         console.log(error);
-          res.status(500).json({ error: "Error creating user" });
+        console.log(error);
+
+        // Handle duplicate key error (e.g., email already exists)
+        if (error.code === 11000) 
+        {
+          // return BAD REQUEST
+          return res.status(400).json({ error: "User already exists" });  
+        }
+
+        res.status(500).json({ error: "Error creating user" });
+        
       }
 
 };
@@ -39,10 +48,16 @@ export const login = async (req, res) =>
 
 
 
-  // If user not found or password does not match, return error
-  if (!user || !(await bcrypt.compare(password, user.password))) 
+  // If user not found , return error
+  if (!user) 
   {
-    return res.status(400).json({ error: "Invalid credentials" });
+    return res.status(400).json({ error: "User No Found" });
+  }
+
+  //If password does not match , return error
+  if(!await bcrypt.compare(password, user.password))
+  {
+    return res.status(400).json({ error: "Incorrect Password" });
   }
 
 

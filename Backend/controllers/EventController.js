@@ -13,9 +13,9 @@ export const createEvent = async (req, res) =>
 
 export const getMyEvents = async (req, res) => 
 {
-  console.log("Authenticated user:", req.user); // Debugging line
 
-  const events = await Event.find({ creator: req.user._id }).populate("participants");
+  const events = await Event.find({ creator: req.user._id }).populate("participants"); // replaces ObjectId with User document
+  
   res.json(events);
 };
 
