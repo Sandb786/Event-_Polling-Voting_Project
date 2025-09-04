@@ -12,6 +12,7 @@ router.get("/", (req, res) => {
 router.post("/create", authMiddleware, createEvent);
 
 router.get("/my-events", authMiddleware, getMyEvents);
+
 router.post("/invite", authMiddleware, inviteUser);
 router.post("/vote", authMiddleware, votePoll);
 

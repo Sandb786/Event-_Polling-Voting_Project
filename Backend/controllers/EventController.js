@@ -2,6 +2,8 @@ import Event from "../models/Event.js";
 
 export const createEvent = async (req, res) => 
 {
+
+
   // save event to DB with creator as req.user._id
   const event = await Event.create({ ...req.body, creator: req.user._id });
 
@@ -9,7 +11,10 @@ export const createEvent = async (req, res) =>
 };
 
 
-export const getMyEvents = async (req, res) => {
+export const getMyEvents = async (req, res) => 
+{
+  console.log("Authenticated user:", req.user); // Debugging line
+
   const events = await Event.find({ creator: req.user._id }).populate("participants");
   res.json(events);
 };
