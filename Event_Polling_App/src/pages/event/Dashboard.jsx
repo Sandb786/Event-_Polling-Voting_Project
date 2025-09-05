@@ -33,7 +33,8 @@ export default function Dashboard() {
     setSelectedEventId(null); // close manage view
   };
 
-  const handleEventDeleted = (eventId) => {
+  const handleEventDeleted = (eventId) => 
+  {
     setMyEvents((prev) => prev.filter((e) => e._id !== eventId));
     setSelectedEventId(null); // close manage view
   };
@@ -66,7 +67,7 @@ export default function Dashboard() {
 
       {/* Manage Event Modal/Section */}
       {selectedEventId && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center overflow-auto py-4">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-xl">
             <ManageEvent
               eventId={selectedEventId}

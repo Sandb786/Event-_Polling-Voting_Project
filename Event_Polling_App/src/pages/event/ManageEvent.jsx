@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../../api";
 import toast from "react-hot-toast";
+import { AddParticipants } from "./AddParticipants";
 
 export default function ManageEvent({ eventId, onEventUpdated, onEventDeleted }) {
 
@@ -47,8 +48,9 @@ export default function ManageEvent({ eventId, onEventUpdated, onEventDeleted })
         api.delete(`/events/event/${eventId}`, {
             headers: { Authorization: `Bearer ${token}` }
         })
-            .then(() => {
+            .then((res) => {
                 toast.success("Event deleted!");
+                console.log("Event Deleted ID: ", res.data);
                 onEventDeleted(eventId);
             })
             .catch(() => toast.error("Failed to delete event"));
@@ -120,24 +122,12 @@ export default function ManageEvent({ eventId, onEventUpdated, onEventDeleted })
                 }
                 className="p-2 border rounded mb-3"
             />
-            {/* Participants List */}
-            <div className="mt-3">
-                <p className="text-gray-500 font-medium mb-1">Invited Participants</p>
-                {event.participants && event.participants.length > 0 ? (
-                    <ul className="list-disc list-inside text-gray-700">
-                        {event.participants.map((user) => (
-                            <li key={user._id}>
-                                {user.username} <span className="text-sm text-gray-500">({user.email})</span>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-sm text-gray-400">No participants invited yet.</p>
-                )}
-            </div>
-
-
             
+
+            {/* Add Participent */}
+            <div className="max-h-50 overflow-y-auto mb-4">
+            <AddParticipants eventId={eventId}/>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex justify-between mt-4">

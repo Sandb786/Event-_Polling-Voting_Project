@@ -30,7 +30,8 @@ export const updateEvent = async (req, res) =>
 
 export const deleteEvent = async (req, res) =>
 {
-    Event.deleteOne({ _id: req.params.id });
+   // Delete event by ID
+    await Event.deleteOne({ _id: req.params.id });
 
     res.json({ message: "Event deleted" });
 }
@@ -55,43 +56,48 @@ export const getMyEvents = async (req, res) =>
 
 
 export const inviteUser = async (req, res) => 
-{
-  
-  try 
   {
 
-    const { eventId, userId } = req.body;
+  try {
+    const { eventId, userIds } = req.body; // expects an array of userIds
 
     // 1. find event
     const event = await Event.findById(eventId);
+
     if (!event) return res.status(404).json({ error: "Event not found" });
 
     // 2. only creator can invite
-    if (String(event.creator) !== String(req.user._id)) 
-    {
+    if (String(event.creator) !== String(req.user._id)) {
       return res.status(403).json({ error: "Only creator can invite" });
     }
 
-    // 3. check if already a participant
-    if (event.participants.includes(userId)) 
-    {
-      return res.status(400).json({ error: "User already invited/participant" });
+    // 3. Add users without duplicates
+    const newParticipants = userIds.filter(
+      (id) => !event.participants.map(String).includes(String(id))
+    );
+
+    if (newParticipants.length === 0) {
+      return res.status(400).json({ error: "All users already invited" });
     }
 
-    // 4. add to participants
-    event.participants.push(userId);
+    event.participants.push(...newParticipants);
 
     await event.save();
 
-    res.json({ message: "User invited successfully", event });
+    // populate participants for frontend display
+    await event.populate("participants", "username email");
+
+    res.json({ message: "Users invited successfully", event });
+
   } 
   catch (err) 
   {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
-
+  
 };
+
 
 // POST /events/:eventId/poll
 export const createPoll = async (req, res) =>
