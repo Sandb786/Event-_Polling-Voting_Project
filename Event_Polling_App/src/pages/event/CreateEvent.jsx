@@ -11,17 +11,8 @@ export default function CreateEvent({ myEvents, setMyEvents }) {
   });
 
   const [dateInput, setDateInput] = useState(""); // single date input before adding
-  const [users, setUsers] = useState([]); // list of all users
 
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    // fetch all users to invite
-    api.get("/events/users", { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => setUsers(res.data))
-      .catch(() => toast.error("Failed to load users"));
-  }, [token]);
-
 
   // submit event
   const handleCreate = (e) => {
@@ -64,28 +55,18 @@ export default function CreateEvent({ myEvents, setMyEvents }) {
       {/* Date Options */}
       <label className="block text-sm font-medium mb-1">Date Options</label>
       <div className="flex gap-2 mb-3">
-        <input
-          type="date"
-          value={dateInput}
-          onChange={(e) => setDateInput(e.target.value)}
-          className="p-2 border rounded flex-1"
-        />
-        <button
-          type="button"
-          onClick={() => 
-          {
-            if (dateInput && !newEvent.dateOptions.includes(dateInput)) {
-              setNewEvent({
+      <input
+        type="date"
+        onChange={(e) =>
+        {
+          setNewEvent({
                 ...newEvent,
-                dateOptions: [...newEvent.dateOptions, dateInput],
+                dateOptions: [...newEvent.dateOptions, e.target.value],
               });
-              setDateInput(""); // clear after adding
-            }
-          }}
-          className="px-3 py-2 bg-blue-500 text-white rounded"
-        >
-          Add
-        </button>
+        }
+        }
+        className="p-2 border rounded mb-3"
+      />
       </div>
 
       {/* Show Added Dates */}
@@ -111,44 +92,6 @@ export default function CreateEvent({ myEvents, setMyEvents }) {
           </span>
         ))}
       </div>
-
-
-      {/* Participants */}
-      <label className="block text-sm font-medium mb-2">Invite Participants</label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-        {users.map((user) => (
-          <label
-            key={user._id}
-            className={`flex items-center w-full p-3 border rounded-lg shadow-sm cursor-pointer hover:shadow-md transition ${newEvent.participants.includes(user._id) ? "bg-blue-50 border-blue-400" : "bg-white"
-              }`}
-          >
-            <input
-              type="checkbox"
-              value={user._id}
-              checked={newEvent.participants.includes(user._id)}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setNewEvent({
-                    ...newEvent,
-                    participants: [...newEvent.participants, user._id],
-                  });
-                } else {
-                  setNewEvent({
-                    ...newEvent,
-                    participants: newEvent.participants.filter((id) => id !== user._id),
-                  });
-                }
-              }}
-              className="mr-2"
-            />
-            <div>
-              <p className="font-medium text-gray-800">{user.username}</p>
-            </div>
-
-          </label>
-        ))}
-      </div>
-
 
       {/* Submit */}
       <button className="w-full bg-blue-500 text-white p-2 rounded">Create</button>

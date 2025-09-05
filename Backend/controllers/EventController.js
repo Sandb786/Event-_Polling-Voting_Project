@@ -31,6 +31,7 @@ export const updateEvent = async (req, res) =>
 export const deleteEvent = async (req, res) =>
 {
     Event.deleteOne({ _id: req.params.id });
+
     res.json({ message: "Event deleted" });
 }
 
@@ -92,17 +93,75 @@ export const inviteUser = async (req, res) =>
 
 };
 
-
-export const votePoll = async (req, res) => 
+// POST /events/:eventId/poll
+export const createPoll = async (req, res) =>
 {
-  const { eventId, option } = req.body;
-  const event = await Event.findById(eventId);
+  const { question, options } = req.body;
+
+  const event = await Event.findById(req.params.eventId);
+
   if (!event) return res.status(404).json({ error: "Event not found" });
 
-  const pollOption = event.poll.options.find(o => o.option === option);
-  if (!pollOption) return res.status(400).json({ error: "Invalid option" });
+  // only creator can create poll
+  if (String(event.creator) !== String(req.user._id)) 
+  {
+    return res.status(403).json({ error: "Only creator can create poll" });
+  }
 
-  pollOption.votes.push(req.user._id);
-  await event.save();
-  res.json(event);
+  event.poll = 
+  {
+    question,
+    options: options.map((opt) => ({ option: opt, votes: [] })),
+  };
+
+   await event.save();
+
+  console.log("\n POLL: ",event);
+
+  res.json(event.poll);
 };
+
+
+// GET /events/:eventId/poll
+export const getPoll= async (req, res) => 
+{
+  try {
+    const event = await Event.findById(req.params.eventId).populate("poll.options.votes", "name email");
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    res.json(event.poll);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+// POST /events/:eventId/poll/vote 
+export const votePoll= async (req, res) => {
+  try {
+    const { optionIndex } = req.body;
+    const userId = req.user._id; // from auth middleware
+
+    const event = await Event.findById(req.params.eventId);
+    if (!event) return res.status(404).json({ error: "Event not found" });
+    if (!event.poll || !event.poll.options[optionIndex]) {
+      return res.status(400).json({ error: "Invalid poll option" });
+    }
+
+    // Remove previous votes from this user (only one active vote allowed)
+    event.poll.options.forEach((opt) => {
+      opt.votes = opt.votes.filter(
+        (vote) => vote.toString() !== userId.toString()
+      );
+    });
+
+    // Add vote to selected option
+    event.poll.options[optionIndex].votes.push(userId);
+
+    await event.save();
+    res.json(event.poll);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+

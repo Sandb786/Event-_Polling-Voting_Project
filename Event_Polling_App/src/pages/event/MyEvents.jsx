@@ -1,6 +1,10 @@
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-export default function MyEvents({ myEvents,setSelectedEventId }) {
+export default function MyEvents({ myEvents,setSelectedEventId }) 
+{
+   const navigate= useNavigate();
+
   return (
     <div className="mb-8">
       <h2 className="text-xl font-semibold mb-4">My Events</h2>
@@ -9,12 +13,21 @@ export default function MyEvents({ myEvents,setSelectedEventId }) {
           <div key={ev._id} className="bg-white shadow rounded-lg p-4 border hover:shadow-md transition">
             <h3 className="text-lg font-bold">{ev.title}</h3>
             <p className="text-gray-600 mb-3">{ev.description}</p>
-            <button
+            <div className="flex justify-between items-center">
+              <button
               onClick={() => setSelectedEventId(ev._id)}
               className="bg-blue-500 text-white px-3 py-1 rounded transition active:scale-95"
             >
               Manage event
             </button>
+
+            <button
+              onClick={() => navigate('/poll', { state: { eventId: ev._id } })}
+              className="bg-green-500 text-white px-3 py-1 rounded transition active:scale-95"
+            >
+             {ev._id}
+            </button>
+            </div>
           </div>
         ))}
       </div>

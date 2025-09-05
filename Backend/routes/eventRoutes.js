@@ -1,5 +1,5 @@
 import express from "express";
-import { createEvent, deleteEvent, getAllUsers, getEventById, getMyEvents, inviteUser, updateEvent, votePoll } from "../controllers/EventController.js";
+import { createEvent, createPoll, deleteEvent, getAllUsers, getEventById, getMyEvents, getPoll, inviteUser, updateEvent, votePoll } from "../controllers/EventController.js";
 import { authMiddleware } from "../middlewares/auth.js";
 
 
@@ -19,6 +19,9 @@ router.put("/event/:id", authMiddleware,updateEvent );
 router.delete("/event/:id", authMiddleware,deleteEvent);
 
 router.post("/invite", authMiddleware, inviteUser);
-router.post("/vote", authMiddleware, votePoll);
+router.post("/:eventId/poll", authMiddleware, createPoll);
+router.get("/:eventId/poll", authMiddleware, getPoll);
+
+router.post("/:eventId/poll/vote", authMiddleware, votePoll);
 
 export default router;
