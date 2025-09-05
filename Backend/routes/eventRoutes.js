@@ -1,5 +1,5 @@
 import express from "express";
-import { createEvent, getMyEvents, inviteUser, votePoll } from "../controllers/EventController.js";
+import { createEvent, deleteEvent, getAllUsers, getEventById, getMyEvents, inviteUser, updateEvent, votePoll } from "../controllers/EventController.js";
 import { authMiddleware } from "../middlewares/auth.js";
 
 
@@ -11,7 +11,12 @@ router.get("/", (req, res) => {
 
 router.post("/create", authMiddleware, createEvent);
 
+router.get("/users", authMiddleware, getAllUsers);
 router.get("/my-events", authMiddleware, getMyEvents);
+
+router.get("/event/:id", authMiddleware, getEventById);
+router.put("/event/:id", authMiddleware,updateEvent );
+router.delete("/event/:id", authMiddleware,deleteEvent);
 
 router.post("/invite", authMiddleware, inviteUser);
 router.post("/vote", authMiddleware, votePoll);

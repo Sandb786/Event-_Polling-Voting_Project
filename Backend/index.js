@@ -19,7 +19,7 @@ app.use(cros());
 
 
 app.use("/api/auth",auth);
-app.use("/api/event",event);
+app.use("/api/events",event);
 
 
 app.listen(5000, () => console.log("Server running on port 5000"));
