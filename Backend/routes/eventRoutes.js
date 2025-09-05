@@ -20,7 +20,8 @@ router.delete("/event/:id", authMiddleware,deleteEvent);
 
 router.post("/invite", authMiddleware, inviteUser);
 router.post("/:eventId/poll", authMiddleware, createPoll);
-router.get("/:eventId/poll", authMiddleware, getPoll);
+
+router.get("/:eventId/polls", authMiddleware, getPoll);
 
 router.post("/:eventId/poll/vote", authMiddleware, votePoll);
 

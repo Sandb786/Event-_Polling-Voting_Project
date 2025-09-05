@@ -100,42 +100,59 @@ export const inviteUser = async (req, res) =>
 
 
 // POST /events/:eventId/poll
-export const createPoll = async (req, res) =>
+export const createPoll = async (req, res) => 
 {
-  const { question, options } = req.body;
+  try {
 
-  const event = await Event.findById(req.params.eventId);
+    const { question, options } = req.body;
 
-  if (!event) return res.status(404).json({ error: "Event not found" });
+    const event = await Event.findById(req.params.eventId);
 
-  // only creator can create poll
-  if (String(event.creator) !== String(req.user._id)) 
-  {
-    return res.status(403).json({ error: "Only creator can create poll" });
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    // only creator can create poll
+    if (String(event.creator) !== String(req.user._id)) {
+      return res.status(403).json({ error: "Only creator can create poll" });
+    }
+
+    const newPoll = {
+      question,
+      options: options.map((opt) => ({ option: opt, votes: [] })),
+    };
+
+    
+    
+    // if poll is an array, push new one
+    event.poll.push(newPoll);
+    
+    console.log(event.poll);
+    
+    await event.save();
+
+
+    res.status(201).json({ message: "Poll created successfully"});
+
+  } catch (err) {
+    console.error("Error creating poll:", err);
+    res.status(500).json({ error: "Server error" });
   }
-
-  event.poll = 
-  {
-    question,
-    options: options.map((opt) => ({ option: opt, votes: [] })),
-  };
-
-   await event.save();
-
-  console.log("\n POLL: ",event);
-
-  res.json(event.poll);
 };
+
 
 
 // GET /events/:eventId/poll
 export const getPoll= async (req, res) => 
 {
-  try {
+  try 
+  {
+     console.log(req.params.eventId);
+
     const event = await Event.findById(req.params.eventId).populate("poll.options.votes", "name email");
+
     if (!event) return res.status(404).json({ error: "Event not found" });
 
     res.json(event.poll);
+
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }

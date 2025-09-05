@@ -12,7 +12,7 @@ const eventSchema = new mongoose.Schema(
 
   participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
-  poll: 
+  poll: [
   {
     question: String,
     options: [
@@ -22,6 +22,7 @@ const eventSchema = new mongoose.Schema(
                 }
             ]
   }
+]
 
 });
 

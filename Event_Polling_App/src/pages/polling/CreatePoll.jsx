@@ -35,7 +35,7 @@ export default function CreatePoll()
       .then(() => 
         {
          toast.success("Poll created successfully!");
-       navigate("/poll", { state: { eventId } }); // go back to event page
+        navigate("/poll", { state: { eventId } }); // go back to event page
       })
       .catch(() => toast.error("Failed to create poll"));
      console.log(eventId);
